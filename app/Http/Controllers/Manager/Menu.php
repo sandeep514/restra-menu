@@ -171,25 +171,30 @@ public function specialstatus($id, $status)
             'price' => 'required|integer',
             'discount'=>'integer',
             'description'=>'required|max:500',
-            'rating'=>'required',
+            'rating'=>'required', 
             'foodstatus'=>'required'
 
             // 'image'=>'required|image|mimes:jpeg,png,jpg|max:2048'
         ]);
-        if(!empty($request->discount))
+        if($request->discount != '0')
         {
             if($menu->price <= $request->discount){                
             return redirect()->back()
             ->withErrors('Discount amount is more than actual price');    
+            }
+            else{
+                $menu->total_amount=$request->price - $request->discount;           
             }            
         }    
+        else{
+                $menu->total_amount=$request->price;           
+        }
         if ($request->file('image'))
         {
             $name = $request->file('image')->getClientOriginalName();
             $destinationPath = public_path('category/');
             $request->file('image')->move($destinationPath,$name);
         }
-        
         if ($request->hasFile('image'))
         {
             $menu->image = $name;
